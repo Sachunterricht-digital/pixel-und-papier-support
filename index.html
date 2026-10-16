@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel und Papier · Der Unterrichtsplaner</title>
+<meta name="description" content="Pixel und Papier ist der Wochenplaner für Lehrkräfte auf Mac und iPhone. Ohne Konto, ohne Server, alle Daten bleiben auf dem Gerät oder in der eigenen iCloud.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  /* Schriften liegen hier, keine Anfrage nach außen. Poppins für Überschriften, Lexend für
+     den Lesetext, dasselbe Paar wie auf fortbildung.bdb-aic.de. */
+  @font-face { font-family: "Poppins"; src: url("schriften/Poppins-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Lexend"; src: url("schriften/Lexend-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+
+  :root {
+    --hintergrund: #f6f7f8;
+    --flaeche: #ffffff;
+    --text: #1f2d33;
+    --text-2: #596c75;
+    --linie: #dbe3e7;
+    --petrol: #1f5f6b;
+    --petrol-dunkel: #174a54;
+    --petrol-weich: #e6f0f1;
+    --gelb: #e8b93a;
+    --gelb-weich: #fdf3cf;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0; background: var(--hintergrund); color: var(--text);
+    font: 400 16px/1.6 "Lexend", -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--petrol-weich); color: var(--petrol-dunkel); }
+  a { color: var(--petrol); text-decoration: none; text-underline-offset: 3px; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--petrol); outline-offset: 2px; border-radius: 4px; }
+  h1, h2, h3 { font-family: "Poppins", "Lexend", sans-serif; font-weight: 700; letter-spacing: -0.015em; margin: 0; color: var(--text); text-wrap: balance; }
+  p { margin: 0; }
+  img { display: block; max-width: 100%; height: auto; }
+
+  /* ── Kopf ── */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(246, 247, 248, 0.95); border-bottom: 1px solid var(--linie);
+  }
+  .kopf { max-width: 72rem; margin: 0 auto; padding: 0 16px; display: flex; align-items: stretch; gap: 24px; flex-wrap: wrap; }
+  .marke { display: block; padding: 12px 0; line-height: 1.2; color: inherit; }
+  .marke:hover { text-decoration: none; }
+  .marke b { display: block; font-family: "Poppins", sans-serif; font-size: 17px; color: var(--petrol); letter-spacing: -0.01em; }
+  .marke span { display: block; font-size: 12px; color: var(--text-2); }
+  .kopf nav { margin-left: auto; display: flex; align-items: stretch; }
+  .kopf nav a {
+    display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 14px; color: var(--text-2);
+    border-bottom: 2px solid transparent;
+  }
+  .kopf nav a:hover { color: var(--text); text-decoration: none; }
+  .kopf nav a svg { width: 16px; height: 16px; }
+  .kopf nav a.hervor {
+    margin: 10px 0 10px 8px; padding: 0 16px; border-radius: 8px; border: 0;
+    background: var(--petrol); color: #fff; font-weight: 600;
+  }
+  .kopf nav a.hervor:hover { background: var(--petrol-dunkel); }
+  @media (max-width: 760px) {
+    .kopf { gap: 8px; }
+    .kopf nav { order: 3; flex-basis: 100%; border-top: 1px solid var(--linie); justify-content: space-between; }
+    .kopf nav a { padding: 10px 6px; flex: 1; justify-content: center; }
+    .kopf nav a span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .kopf nav a.hervor { position: absolute; right: 16px; top: 8px; margin: 0; height: 36px; }
+    .kopf nav a.hervor span { position: static; width: auto; height: auto; clip: auto; }
+  }
+
+  /* ── Abschnitte mit linker Leiste, wie auf der BdB-Seite ── */
+  main { max-width: 72rem; margin: 0 auto; padding: 40px 16px 0; }
+  section { display: grid; grid-template-columns: 11rem 1px minmax(0, 46rem); gap: 0 36px; padding: 56px 0; }
+  section + section { border-top: 1px solid var(--linie); }
+  .leiste { text-align: right; color: var(--text-2); font-size: 13px; padding-top: 6px; }
+  .leiste svg { width: 18px; height: 18px; stroke: var(--text-2); }
+  .leiste ol { list-style: none; margin: 14px 0 0; padding: 0; line-height: 1.9; }
+  .leiste ol a { color: var(--text-2); }
+  .leiste ol a:hover { color: var(--text); text-decoration: none; }
+  .strich { background: var(--linie); }
+  .inhalt > * + * { margin-top: 18px; }
+  @media (max-width: 900px) {
+    section { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 40px 0; }
+    .leiste, .strich { display: none; }
+  }
+
+  /* ── Start ── */
+  .start h1 { font-size: clamp(34px, 5vw, 50px); line-height: 1.08; color: var(--petrol); }
+  .start .einleitung { font-size: 18px; line-height: 1.6; max-width: 36rem; }
+  .fakten { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--text-2); }
+  .fakten span { display: flex; align-items: center; gap: 7px; }
+  .fakten svg { width: 15px; height: 15px; stroke: var(--petrol); }
+  .chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--gelb-weich); color: #6b5410; border: 1px solid #efd77a; }
+  .bild { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--radius); overflow: hidden; }
+  .bild img { width: 100%; }
+  .bildunterschrift { font-size: 13px; color: var(--text-2); margin-top: 8px; }
+  .start-bilder { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 20px; align-items: end; margin-top: 28px; }
+  .start-bilder .telefon { border-radius: 18px; }
+  @media (max-width: 560px) { .start-bilder { grid-template-columns: 1fr; } .start-bilder .telefon { width: 150px; } }
+
+  h2 { font-size: 26px; }
+  .inhalt h3 { font-size: 17px; margin-top: 30px; }
+  .inhalt h3 + p { margin-top: 6px; }
+  .inhalt > p, .inhalt li { color: var(--text); }
+  .leise { color: var(--text-2); }
+
+  /* ── Anleitung ── */
+  .schritt { padding: 26px 0; border-top: 1px solid var(--linie); display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0 14px; }
+  .schritt:first-of-type { border-top: 0; padding-top: 6px; }
+  .schritt .nr { font-family: "Poppins", sans-serif; font-weight: 700; font-size: 22px; color: var(--petrol); line-height: 1.2; }
+  .schritt h3 { margin: 0; font-size: 18px; }
+  .schritt p { margin-top: 6px; }
+  .schritt .bild { grid-column: 2; margin-top: 16px; }
+  .schritt .bildunterschrift { grid-column: 2; }
+  @media (max-width: 560px) { .schritt .bild, .schritt .bildunterschrift { grid-column: 1 / -1; } }
+
+  /* ── Datenschutz als Lesetext ── */
+  .lesetext h3 { font-size: 16px; }
+  .lesetext p + p { margin-top: 8px; }
+  .lesetext .platzhalter { color: var(--text-2); }
+
+  /* ── FAQ ── */
+  .faq dt { font-weight: 600; margin-top: 18px; }
+  .faq dd { margin: 4px 0 0; }
+  .faq dt:first-child { margin-top: 0; }
+  .karte { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--radius); padding: 18px 20px; }
+  .karte p + p { margin-top: 8px; }
+  .knopf { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--petrol); color: var(--petrol); font-weight: 600; font-size: 14px; }
+  .knopf:hover { background: var(--petrol-weich); text-decoration: none; }
+  .knopf.aus { border-color: var(--linie); color: var(--text-2); cursor: default; }
+  .knopf.aus:hover { background: transparent; }
+
+  footer { margin-top: 64px; border-top: 1px solid var(--linie); background: rgba(255, 255, 255, 0.6); }
+  .fuss { max-width: 72rem; margin: 0 auto; padding: 28px 16px; display: flex; flex-wrap: wrap; gap: 12px 32px; font-size: 14px; color: var(--text-2); }
+  .fuss nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .fuss nav a { color: var(--text-2); }
+  .fuss nav a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kopf">
+    <a class="marke" href="#start"><b>Pixel und Papier</b><span>Der Unterrichtsplaner</span></a>
+    <nav aria-label="Seitenbereiche">
+      <a href="#anleitung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M8 7h8M8 11h6"/></svg><span>Anleitung</span></a>
+      <a href="#datenschutz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Datenschutz</span></a>
+      <a href="#kontakt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg><span>Kontakt</span></a>
+      <a href="#testflight" class="hervor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 4.5 6.5 4.5 10.5L12 16l-4.5-2.5C7.5 9.5 9 6 12 3z"/><path d="M7.5 13.5 5 17l3.5-.5M16.5 13.5 19 17l-3.5-.5M12 16v5"/></svg><span>TestFlight</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section id="start" class="start">
+    <div class="leiste"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/></svg></div>
+    <div class="strich"></div>
+    <div class="inhalt">
+      <h1>Die Woche planen, der Tag auf einen Blick</h1>
+      <p class="einleitung">Pixel und Papier ist der Wochenplaner für Lehrkräfte. Der Stundenplan ist die Vorlage, jede Woche bekommt Thema und Notizen je Stunde, der Tagesplan kommt als A4-Blatt aus dem Drucker. Ohne Konto, ohne Server: Die Planung bleibt auf dem Gerät oder in der eigenen iCloud.</p>
+      <div class="fakten">
+        <span class="chip">Gratis</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Mac</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>iPhone</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg>Keine Daten erfasst</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>16 Bundesländer</span>
+      </div>
+      <div class="start-bilder">
+        <figure class="bild" style="margin:0"><img src="bilder/web-woche.png" width="1400" height="860" alt="Der Wochenplan am Mac: fünf Spalten für die Schultage, farbige Stunden mit Thema und Notizen, links die Liste der Kalenderwochen mit Ferien" loading="eager"></figure>
+        <figure class="bild telefon" style="margin:0"><img src="bilder/web-iphone.png" width="880" height="1912" alt="Der Tag am iPhone: die Stunden untereinander mit Thema und Notizen" loading="lazy"></figure>
+      </div>
+      <p class="bildunterschrift">Wochenplan am Mac und der Tag am iPhone, mit erfundenen Beispieldaten.</p>
+    </div>
+  </section>
+
+  <section id="anleitung">
+    <div class="leiste">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M8 7h8M8 11h6"/></svg>
+      <ol>
+        <li><a href="#schritt-1">Einrichten</a></li>
+        <li><a href="#schritt-2">Kurse und Stundenplan</a></li>
+        <li><a href="#schritt-3">Eine Woche planen</a></li>
+        <li><a href="#schritt-4">Ferien anpassen</a></li>
+        <li><a href="#schritt-5">iCloud an oder aus</a></li>
+      </ol>
+    </div>
+    <div class="strich"></div>
+    <div class="inhalt">
+      <h2>Die ersten Schritte</h2>
+      <p class="leise">Fünf Schritte vom ersten Start bis zur geplanten Woche. Die Bilder stammen aus Probeläufen mit erfundenen Daten.</p>
+
+      <div class="schritt" id="schritt-1">
+        <div class="nr">1</div>
+        <div><h3>Einrichten</h3>
+          <p>Beim ersten Start fragt die App nacheinander nach Name und Schule, Bundesland und Schuljahr, den Schultagen von Montag bis Sonntag, den Unterrichtszeiten und den ersten Kursen. Jede Angabe lässt sich später in den Einstellungen ändern. Name und Schule dürfen leer bleiben, sie stehen nur auf dem gedruckten Tagesplan.</p></div>
+        <figure class="bild" style="margin:0"><img src="bilder/web-erststart.png" width="620" height="620" alt="Erster Schritt der Einrichtung: Felder für Name und Schule, darunter der Hinweis, dass alle Daten auf dem Gerät bleiben" loading="lazy"></figure>
+      </div>
+
+      <div class="schritt" id="schritt-2">
+        <div class="nr">2</div>
+        <div><h3>Kurse und Stundenplan</h3>
+          <p>Ein Kurs ist ein Fach mit Klasse und Farbe, etwa Deutsch 3a. Unter Einstellungen, Stundenplan wird ein Kurs oben angeklickt und dann in die Stunden gesetzt. Pausen lassen sich ebenfalls belegen, zum Beispiel mit einer Aufsicht. Der Stundenplan ist die Vorlage für alle kommenden Wochen, vergangene Wochen bleiben wie sie waren.</p></div>
+        <figure class="bild" style="margin:0"><img src="bilder/web-kurse.png" width="1200" height="760" alt="Einstellungen, Stundenplan: die Kursleiste oben, darunter das Raster der Woche mit farbigen Stunden" loading="lazy"></figure>
+      </div>
+
+      <div class="schritt" id="schritt-3">
+        <div class="nr">3</div>
+        <div><h3>Eine Woche planen</h3>
+          <p>Im Wochenplan steht links die Liste der Kalenderwochen mit den Ferien. In jeder Stunde gibt es ein Feld für das Thema und eines für Notizen, gespeichert wird beim Tippen. Eine Stunde lässt sich verschieben, tauschen oder über die Wochengrenze mitnehmen. Fällt eine Stunde aus, rutscht der Stoff auf die nächste desselben Kurses.</p></div>
+        <figure class="bild" style="margin:0"><img src="bilder/web-woche.png" width="1400" height="860" alt="Der Wochenplan mit Thema und Notizen in den Stunden" loading="lazy"></figure>
+      </div>
+
+      <div class="schritt" id="schritt-4">
+        <div class="nr">4</div>
+        <div><h3>Ferien anpassen</h3>
+          <p>Ferien und Feiertage kommen mit dem Bundesland, nach den Terminen der Kultusministerkonferenz für 2026/27 und 2027/28. Bewegliche Ferientage, pädagogische Tage oder ein Schulfest werden unter Einstellungen, Profil als freie Tage eingetragen. „Standard wiederherstellen“ holt die Termine der KMK zurück.</p></div>
+        <figure class="bild" style="margin:0"><img src="bilder/web-ferien.png" width="1200" height="900" alt="Einstellungen, Profil: Liste der Ferienblöcke und freien Tage mit Datumsfeldern" loading="lazy"></figure>
+      </div>
+
+      <div class="schritt" id="schritt-5">
+        <div class="nr">5</div>
+        <div><h3>iCloud an oder aus</h3>
+          <p>Mit eingeschaltetem Abgleich legt die App ihre Dateien im eigenen iCloud-Ordner ab, Apple verteilt sie auf die Geräte mit derselben Apple-ID. Ausgeschaltet bleibt alles nur auf einem Gerät. Der Schalter steht unter Einstellungen, iCloud. Beim Ausschalten wird der Plan auf das Gerät kopiert, in iCloud bleibt alles stehen, nichts wird gelöscht.</p></div>
+        <figure class="bild" style="margin:0"><img src="bilder/web-abgleich.png" width="1200" height="640" alt="Einstellungen, iCloud: Stand des Abgleichs und die Erklärung, was beim Umschalten passiert" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="datenschutz">
+    <div class="leiste"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <div class="strich"></div>
+    <div class="inhalt lesetext">
+      <h2>Datenschutzerklärung</h2>
+      <p class="leise">Für die App „Pixel und Papier“ auf Mac und iPhone.</p>
+
+      <h3>Verantwortlich</h3>
+      <p>Thomas Hermann</p>
+      <p class="platzhalter">[Straße, Hausnummer]</p>
+      <p class="platzhalter">[PLZ Ort]</p>
+      <p><a href="mailto:pixel.und.papier@icloud.com">pixel.und.papier@icloud.com</a></p>
+
+      <h3>Kurz gesagt</h3>
+      <p>Die App „Pixel und Papier“ erhebt, speichert und übermittelt keine personenbezogenen Daten an den Anbieter oder an Dritte. Es gibt keinen Server des Anbieters, kein Benutzerkonto und keine Analyse- oder Werbedienste. Die App baut keine Verbindung ins Internet auf.</p>
+
+      <h3>Welche Daten in der App entstehen</h3>
+      <p>Die App speichert, was in ihr eingegeben wird: Name und Schule (freiwillig), Stundenplan, Kurse mit Fach und Klasse, Unterrichtszeiten, Wochen- und Tagesplanung mit Themen und Notizen, das gewählte Bundesland und Schuljahr sowie eigene Ferien- und Freitage.</p>
+
+      <h3>Schülerdaten</h3>
+      <p>Die App ist auf Planung ohne Schülerdaten ausgelegt. Sie braucht keine Namen oder anderen Daten von Schülerinnen und Schülern. Geplant wird nach Kursen und Klassen, die Felder für Themen und Notizen sind für den Unterrichtsstoff gedacht. Die App weist beim Einrichten darauf hin. Wer dennoch personenbezogene Angaben in Notizen einträgt, tut das in eigener Verantwortung und nach den Vorgaben seines Dienstherrn. Diese Daten verlassen das Gerät beziehungsweise die eigene iCloud nicht.</p>
+
+      <h3>Wo die Daten liegen</h3>
+      <p>Alle Daten werden als Dateien im geschützten Bereich der App auf dem Gerät gespeichert. Die App kann diese Dateien auf Wunsch in eine einzelne Datei herausgeben und eine solche Datei wieder einlesen. Was mit dieser Datei geschieht, entscheidet die Nutzerin oder der Nutzer.</p>
+
+      <h3>iCloud (optional, abschaltbar)</h3>
+      <p>Auf Wunsch legt die App ihre Dateien im iCloud-Bereich der App ab. Dann werden sie von Apple über das Apple-Konto der Nutzerin oder des Nutzers zwischen den eigenen Geräten synchronisiert. Dabei gelten die Datenschutzbestimmungen von Apple. Der Anbieter der App hat keinen Zugriff auf diese Daten. Der Abgleich ist nicht Voraussetzung für die Nutzung: Er lässt sich in den Einstellungen der App jederzeit ausschalten, die Daten werden dann auf das Gerät kopiert und bleiben nur dort. Ohne Abgleich verlässt keine Datei das Gerät.</p>
+
+      <h3>Berechtigungen</h3>
+      <p>Die App nutzt die Dateiauswahl des Systems, wenn eine Datei herausgegeben oder eingelesen wird und die Druckfunktion des Systems für den Tagesplan. Weitere Berechtigungen, etwa Kamera, Standort, Kontakte oder Mitteilungen, werden nicht verwendet.</p>
+
+      <h3>Keine Weitergabe, kein Tracking</h3>
+      <p>Es werden keine Daten an den Anbieter oder an Dritte übermittelt. Die App enthält keine Analyse-, Absturzmelde- oder Werbedienste, verwendet kein Tracking im Sinne von Apples App-Tracking-Transparenz und baut keine Internetverbindung auf. Im App Store ist sie entsprechend mit „Keine Daten erfasst“ gekennzeichnet.</p>
+
+      <h3>Löschen</h3>
+      <p>Mit dem Löschen der App werden alle in der App gespeicherten Daten vom Gerät entfernt. Daten im iCloud-Bereich der App lassen sich in den iCloud-Einstellungen des Geräts löschen.</p>
+
+      <h3>Rechte</h3>
+      <p>Da der Anbieter keine personenbezogenen Daten verarbeitet, können Auskunfts-, Berichtigungs- oder Löschansprüche gegenüber dem Anbieter nicht entstehen. Fragen beantwortet der Verantwortliche unter der oben genannten Adresse.</p>
+
+      <h3>Diese Webseite</h3>
+      <p>Diese Seite setzt keine Cookies, bindet keine fremden Dienste ein und misst keine Zugriffe. Schriften und Bilder werden von derselben Adresse geladen wie die Seite selbst.</p>
+      <p class="leise">Stand: <span class="platzhalter">[Datum der Veröffentlichung]</span></p>
+    </div>
+  </section>
+
+  <section id="kontakt">
+    <div class="leiste"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></div>
+    <div class="strich"></div>
+    <div class="inhalt">
+      <h2>Kontakt und Fragen</h2>
+      <div class="karte">
+        <p>Fragen, Fehler, Wünsche: <a href="mailto:pixel.und.papier@icloud.com">pixel.und.papier@icloud.com</a></p>
+        <p class="leise">Hilfreich ist die Angabe, ob es um den Mac oder das iPhone geht und welche Fassung der App läuft (Einstellungen, Über).</p>
+      </div>
+      <dl class="faq">
+        <dt>Wo liegen die Daten?</dt>
+        <dd>Auf dem Gerät im Ordner der App oder, wenn eingeschaltet, in der eigenen iCloud. Es gibt keinen Server des Anbieters.</dd>
+        <dt>Muss iCloud benutzt werden?</dt>
+        <dd>Nein. Der Abgleich läuft über das eigene Apple-Konto und lässt sich in den Einstellungen ausschalten. Dann bleiben die Daten nur auf dem Gerät.</dd>
+        <dt>Wie kommt der Plan auf ein anderes Gerät?</dt>
+        <dd>Über die iCloud-Synchronisierung oder über „Plan als Datei“: herausgeben, auf dem anderen Gerät einlesen.</dd>
+        <dt>Können Schülernamen eingetragen werden?</dt>
+        <dd>Die App ist auf Planung ohne Schülerdaten ausgelegt: Kurse, Klassen, Themen, Notizen zum Stoff. Namen braucht sie nicht.</dd>
+        <dt>Das Bundesland hat bewegliche Ferientage.</dt>
+        <dd>Unter Einstellungen, Profil lassen sie sich als freie Tage eintragen. „Standard wiederherstellen“ holt die Termine der Kultusministerkonferenz zurück.</dd>
+        <dt>Was kostet die App?</dt>
+        <dd>Nichts. Zum Start ist sie gratis, es gibt kein Abo und keine Käufe in der App.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section id="testflight">
+    <div class="leiste"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 4.5 6.5 4.5 10.5L12 16l-4.5-2.5C7.5 9.5 9 6 12 3z"/><path d="M7.5 13.5 5 17l3.5-.5M16.5 13.5 19 17l-3.5-.5M12 16v5"/></svg></div>
+    <div class="strich"></div>
+    <div class="inhalt">
+      <h2>Beta über TestFlight</h2>
+      <p>Vor der Veröffentlichung im App Store läuft eine Beta über TestFlight, Apples Programm für Vorabfassungen. Wer mitmacht, installiert die App „TestFlight“ aus dem App Store und öffnet dann den Einladungslink. Rückmeldungen gehen direkt aus TestFlight oder per E-Mail an die Kontaktadresse. Jede Beta-Fassung läuft 90 Tage.</p>
+      <div class="karte">
+        <p><span class="knopf aus">Einladungslink folgt</span></p>
+        <p class="leise">Der Link erscheint hier, sobald die Beta geöffnet ist. Die Plätze sind begrenzt.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="fuss">
+    <p>Pixel und Papier · Thomas Hermann</p>
+    <nav aria-label="Fußzeile">
+      <a href="#datenschutz">Datenschutz</a>
+      <a href="#kontakt">Kontakt</a>
+      <a href="#impressum">Impressum</a>
+    </nav>
+  </div>
+  <div class="fuss" id="impressum" style="padding-top:0">
+    <p class="leise" style="font-size:13px">Impressum: Thomas Hermann, <span>[Straße, Hausnummer]</span>, <span>[PLZ Ort]</span>, pixel.und.papier@icloud.com. Schriften Poppins und Lexend unter der SIL Open Font License, Dateien liegen auf dieser Seite.</p>
+  </div>
+</footer>
+
+</body>
+</html>
